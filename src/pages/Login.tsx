@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -16,10 +20,19 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login - in real app, this would connect to Supabase
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { error } = await signIn(email, password);
     
-    // Check if "first time" user (simulated)
+    if (error) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+    
+    // Check if "first time" user
     const isFirstTime = !localStorage.getItem("onboarding_complete");
     
     if (isFirstTime) {

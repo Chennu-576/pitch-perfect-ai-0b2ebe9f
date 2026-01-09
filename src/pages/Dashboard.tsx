@@ -14,6 +14,7 @@ import {
   Users,
   Sparkles,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const statCards = [
   {
@@ -44,8 +45,10 @@ const statCards = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { signOut, user } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     localStorage.removeItem("onboarding_complete");
     navigate("/");
   };
